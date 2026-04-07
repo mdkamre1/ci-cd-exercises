@@ -8,15 +8,14 @@
     "start-prod": "node app.js",
     "test": "jest",
     "eslint": "eslint './**/*.{js,jsx}'",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production",
+    "test:e2e": "playwright test"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/smartlyio/fullstackopen-cicd.git"
+    "url": "https://github.com/smartlyio/fullstackopen-cicd.git"
   },
-  "keywords": [
-    "fullstack-open"
-  ],
+  "keywords": ["fullstack-open"],
   "author": "Smartly.io",
   "license": "ISC",
   "bugs": {
@@ -32,10 +31,9 @@
     "react-router-dom": "^7.13.1"
   },
   "jest": {
-    "testEnvironment": "jsdom",
-    "setupFiles": [
-      "<rootDir>/jest.setup.js"
-    ]
+  "testEnvironment": "jsdom",
+  "setupFilesAfterEnv": ["<rootDir>/jest.setup.js"],
+  "testPathIgnorePatterns": ["e2e-tests"]
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
@@ -58,6 +56,7 @@
     "style-loader": "^4.0.0",
     "webpack": "^5.105.4",
     "webpack-cli": "^6.0.1",
-    "webpack-dev-server": "^5.2.3"
+    "webpack-dev-server": "^5.2.3",
+    "@playwright/test": "^1.44.0"
   }
 }
