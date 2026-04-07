@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import axios from 'axios'
 
 export const useApi = (url, transform) => {
   const [data, setData] = useState(null)
@@ -8,10 +9,11 @@ export const useApi = (url, transform) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(url)
-        const json = await res.json()
+        const res = await axios.get(url)
 
-        const result = transform ? transform(json.results) : json
+        const result = transform
+          ? transform(res.data.results)
+          : res.data
 
         setData(result)
         setIsLoading(false)
