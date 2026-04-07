@@ -1,20 +1,28 @@
-import { useEffect, useState } from 'react'
-import axios from 'axios'
+import { useState, useEffect } from 'react'
 
-const useApi = (url, mapResults = (result) => result) => {
-  const [data, setData] = useState()
+export const useApi = (url, transform) => {
+  const [data, setData] = useState(null)
+  const [error, setError] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState()
+
   useEffect(() => {
-    setIsLoading(true)
-    axios
-      .get(url)
-      .then(response => setData(mapResults(response.data)))
-      .catch(setError)
-      .finally(() => setIsLoading(false))
-  }, [url])
+    const fetchData = async () => {
+      try {
+        const res = await fetch(url)
+        const json = await res.json()
 
-  return { data, isLoading, error }
+        const result = transform ? transform(json.results) : json
+
+        setData(result)
+        setIsLoading(false)
+      } catch (err) {
+        setError(err)
+        setIsLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [url, transform])
+
+  return { data, error, isLoading }
 }
-
-export { useApi }
