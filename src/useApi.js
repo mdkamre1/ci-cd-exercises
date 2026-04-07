@@ -7,23 +7,20 @@ export const useApi = (url, transform) => {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axios.get(url)
-
+    axios
+      .get(url)
+      .then((response) => {
         const result = transform
-          ? transform(res.data.results)
-          : res.data
+          ? transform(response.data.results)
+          : response.data
 
         setData(result)
         setIsLoading(false)
-      } catch (err) {
-        setError(err)
+      })
+      .catch((error) => {
+        setError(error)
         setIsLoading(false)
-      }
-    }
-
-    fetchData()
+      })
   }, [url, transform])
 
   return { data, error, isLoading }
