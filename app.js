@@ -13,7 +13,7 @@ app.get('/version', (req, res) => {
 })
 
 app.get('/health', (req, res) => {
-  res.send('ok')
+  throw
 })
 
 app.use(express.static(path.join(__dirname, 'dist')))
