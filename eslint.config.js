@@ -49,11 +49,24 @@ export default [
     },
   },
 
-  // FIX FOR WEBPACK CONFIG
+  //FIX for webpack config
   {
     files: ['webpack.config.cjs'],
     languageOptions: {
       globals: {
+        __dirname: 'readonly',
+        module: 'readonly',
+        require: 'readonly',
+      },
+    },
+  },
+
+  // FIX for playwright config (THIS was missing)
+  {
+    files: ['playwright.config.cjs'],
+    languageOptions: {
+      globals: {
+        process: 'readonly',
         __dirname: 'readonly',
         module: 'readonly',
         require: 'readonly',
