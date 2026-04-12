@@ -2,10 +2,14 @@ name: Deploy to Render
 
 on:
   push:
+    branches:
+      - main
+  pull_request:
     branches: [main]
+    types: [opened, synchronize]
 
 jobs:
-  deploy:
+  simple_deployment_pipeline:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,5 +21,7 @@ jobs:
       - name: Build app
         run: npm run build
 
+      # Deploy ONLY on push to main (NOT on PR)
       - name: Trigger Render deploy
+        if: ${{ github.event_name == 'push' }}
         run: curl ${{ secrets.RENDER_DEPLOY_HOOK }}
