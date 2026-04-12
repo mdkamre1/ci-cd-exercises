@@ -31,8 +31,9 @@ export default [
         process: 'readonly',
         global: 'readonly',
         __dirname: 'readonly',
+        console: 'readonly',   //FIX ADDED
 
-        // FIX JEST ERRORS
+        // Jest globals
         jest: 'readonly',
         describe: 'readonly',
         it: 'readonly',
@@ -43,7 +44,6 @@ export default [
       react: reactPlugin,
     },
     rules: {
-      // TURN OFF STRICT RULES
       'no-unused-vars': 'off',
       'react/react-in-jsx-scope': 'off',
     },
