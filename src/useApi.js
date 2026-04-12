@@ -7,25 +7,23 @@ export const useApi = (url, mapResults) => {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    setIsLoading(true)
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(url)
 
-    axios
-      .get(url)
-      .then((response) => {
-        const result = mapResults
+        const mapped = mapResults
           ? mapResults(response.data)
           : response.data
 
-        setData(result)
-        setError(null)
-      })
-      .catch((err) => {
-        setError(err)
-        setData(null)
-      })
-      .finally(() => {
+        setData(mapped)
         setIsLoading(false)
-      })
+      } catch (err) {
+        setError(err)
+        setIsLoading(false)
+      }
+    }
+
+    fetchData()
   }, [url])
 
   return { data, error, isLoading }

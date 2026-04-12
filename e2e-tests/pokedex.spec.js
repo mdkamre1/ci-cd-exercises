@@ -1,22 +1,22 @@
-const { test, expect } = require('@playwright/test')
+import { test, expect } from '@playwright/test'
 
 test('front page can be opened', async ({ page }) => {
   await page.goto('http://localhost:8080')
 
-  await page.waitForLoadState('networkidle')
-
+  // just check page loads
   await expect(page.locator('body')).toBeVisible()
 })
 
-test('can navigate to pokemon page', async ({ page }) => {
+test('can navigate somewhere', async ({ page }) => {
   await page.goto('http://localhost:8080')
 
-  await page.waitForLoadState('networkidle')
+  // click any link if exists
+  const links = page.locator('a')
 
-  const link = page.locator('a')
-
-  if (await link.first().isVisible()) {
-    await link.first().click()
-    await expect(page.locator('body')).toBeVisible()
+  if (await links.count() > 0) {
+    await links.first().click()
   }
+
+  // page still works
+  await expect(page.locator('body')).toBeVisible()
 })
