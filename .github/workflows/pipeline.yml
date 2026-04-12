@@ -1,26 +1,38 @@
-steps:
-  - uses: actions/checkout@v4
+name: Deployment pipeline
 
-  - name: Setup Node
-    uses: actions/setup-node@v4
-    with:
-      node-version: 20
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 
-  - name: Install dependencies
-    run: npm install
+jobs:
+  simple_deployment_pipeline:
+    runs-on: ubuntu-latest
 
-  - name: Check style
-    run: npm run eslint
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  - name: Run tests
-    run: npm test
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
 
-  - name: Build project
-    run: npm run build
+      - name: Install dependencies
+        run: npm install
 
+      - name: Check style
+        run: npm run eslint
 
-  - name: Install Playwright Browsers
-    run: npx playwright install --with-deps
+      - name: Run tests
+        run: npm test
 
-  - name: Run Playwright tests
-    run: npm run test:e2e
+      - name: Build
+        run: npm run build
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        run: npm run test:e2e
