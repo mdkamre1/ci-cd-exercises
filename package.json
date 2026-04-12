@@ -36,12 +36,9 @@
   },
   "jest": {
     "testEnvironment": "jsdom",
-    "setupFilesAfterEnv": [
-      "<rootDir>/jest.setup.js"
-    ],
-    "testPathIgnorePatterns": [
-      "e2e-tests"
-    ]
+    "setupFilesAfterEnv": ["<rootDir>/jest.setup.js"],
+    "testMatch": ["**/test/**/*.spec.jsx"],
+    "testPathIgnorePatterns": ["e2e-tests"]
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
