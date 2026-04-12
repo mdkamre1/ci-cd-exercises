@@ -31,7 +31,7 @@ export default [
         process: 'readonly',
         global: 'readonly',
         __dirname: 'readonly',
-        console: 'readonly',   //FIX ADDED
+        console: 'readonly',
 
         // Jest globals
         jest: 'readonly',
@@ -46,6 +46,18 @@ export default [
     rules: {
       'no-unused-vars': 'off',
       'react/react-in-jsx-scope': 'off',
+    },
+  },
+
+  // FIX FOR WEBPACK CONFIG
+  {
+    files: ['webpack.config.cjs'],
+    languageOptions: {
+      globals: {
+        __dirname: 'readonly',
+        module: 'readonly',
+        require: 'readonly',
+      },
     },
   },
 ]
