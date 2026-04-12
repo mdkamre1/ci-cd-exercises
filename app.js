@@ -19,7 +19,7 @@ app.get('/health', (req, res) => {
 app.use(express.static(path.join(__dirname, 'dist')))
 
 // The NEW fix for Express 5 compatibility
-app.get('/:path*', (req, res) => {
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'))
 })
 
