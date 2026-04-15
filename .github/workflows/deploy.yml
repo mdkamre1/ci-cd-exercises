@@ -38,3 +38,36 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BUMP: patch
+
+  notify_success:
+    needs: [simple_deployment_pipeline]
+    runs-on: ubuntu-latest
+    if: ${{ success() && github.event_name == 'push' }}
+
+    steps:
+      - name: Discord success
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          DISCORD_MESSAGE: |
+             Deployment Successful!
+            Repo: ${{ github.repository }}
+            Commit: ${{ github.sha }}
+            Message: ${{ github.event.head_commit.message }}
+            Author: ${{ github.actor }}
+
+  notify_failure:
+    runs-on: ubuntu-latest
+    if: ${{ failure() }}
+
+    steps:
+      - name: Discord failure
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          DISCORD_MESSAGE: |
+             Build Failed!
+            Repo: ${{ github.repository }}
+            Commit: ${{ github.sha }}
+            Message: ${{ github.event.head_commit.message }}
+            Author: ${{ github.actor }}
