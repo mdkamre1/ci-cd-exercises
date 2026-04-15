@@ -1,57 +1,20 @@
-name: Deploy to Render
+name: Periodic Health Check
 
 on:
-push:
-branches:
-- main
-pull_request:
-branches: [main]
-types: [opened, synchronize]
+workflow_dispatch:
+schedule:
+- cron: '0 0 * * *'
 
 jobs:
-build:
+health_check:
 runs-on: ubuntu-latest
-steps:
-- uses: actions/checkout@v3
-- run: npm install
-- run: npm test
-- run: npm run build
 
-deploy:
-needs: [build]
-runs-on: ubuntu-latest
-if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
+```
 steps:
-- uses: actions/checkout@v3
-- run: curl ${{ secrets.RENDER_DEPLOY_HOOK }}
-
-tag_release:
-needs: [deploy]
-runs-on: ubuntu-latest
-if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
-steps:
-- uses: actions/checkout@v3
-- uses: anothrNick/github-tag-action@1.75.0
-env:
-GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-DEFAULT_BUMP: patch
-
-notify_success:
-needs: [deploy, tag_release]
-runs-on: ubuntu-latest
-if: ${{ success() && github.event_name == 'push' }}
-steps:
-- uses: Ilshidur/action-discord@master
-env:
-DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-DISCORD_MESSAGE: " Deployment Successful!"
-
-notify_failure:
-needs: [build, deploy]
-runs-on: ubuntu-latest
-if: ${{ failure() }}
-steps:
-- uses: Ilshidur/action-discord@master
-env:
-DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-DISCORD_MESSAGE: " Build Failed!"
+  - name: Check app health
+    uses: jtalk/url-health-check-action@v4
+    with:
+      url: https://your-app.onrender.com
+      max-attempts: 3
+      retry-delay: 5s
+```
