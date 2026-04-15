@@ -21,18 +21,18 @@ run: npm test
 run: npm run build
 
 deploy:
-needs: [build]
+needs: build
 runs-on: ubuntu-latest
-if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
+if: ${{ github.event_name == 'push' }}
 steps:
 - uses: actions/checkout@v3
 - name: Deploy to Render
 run: curl ${{ secrets.RENDER_DEPLOY_HOOK }}
 
 tag_release:
-needs: [deploy]
+needs: deploy
 runs-on: ubuntu-latest
-if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
+if: ${{ github.event_name == 'push' }}
 steps:
 - uses: actions/checkout@v3
 - name: Tag version
@@ -42,7 +42,7 @@ GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 DEFAULT_BUMP: patch
 
 notify_success:
-needs: [deploy, tag_release]
+needs: deploy
 runs-on: ubuntu-latest
 if: ${{ success() && github.event_name == 'push' }}
 steps:
@@ -50,10 +50,9 @@ steps:
 uses: Ilshidur/action-discord@master
 env:
 DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-DISCORD_MESSAGE: " Deployment Successful!"
-# TEST CHANGE
+DISCORD_MESSAGE: "Deployment Successful!"
+
 notify_failure:
-needs: [build, deploy]
 runs-on: ubuntu-latest
 if: ${{ failure() }}
 steps:
@@ -61,4 +60,4 @@ steps:
 uses: Ilshidur/action-discord@master
 env:
 DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-DISCORD_MESSAGE: " Build Failed!"
+DISCORD_MESSAGE: "Build Failed!"
