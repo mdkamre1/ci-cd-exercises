@@ -50,7 +50,7 @@ jobs:
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
           DISCORD_MESSAGE: |
-             Deployment Successful!
+            Deployment Successful!
             Repo: ${{ github.repository }}
             Commit: ${{ github.sha }}
             Message: ${{ github.event.head_commit.message }}
@@ -66,7 +66,7 @@ jobs:
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
           DISCORD_MESSAGE: |
-             Build Failed!
+            Build Failed!
             Repo: ${{ github.repository }}
             Commit: ${{ github.sha }}
             Message: ${{ github.event.head_commit.message }}
