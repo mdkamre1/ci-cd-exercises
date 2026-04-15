@@ -1,15 +1,5 @@
-name: Deploy to Render
-
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches: [main]
-    types: [opened, synchronize]
-
 jobs:
-  simple_deployment_pipeline:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,15 +8,25 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Run tests
+        run: npm test
+
       - name: Build app
         run: npm run build
 
-      - name: Trigger Render deploy
-        if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
+  deploy:
+    needs: [build]
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Deploy to Render
         run: curl ${{ secrets.RENDER_DEPLOY_HOOK }}
 
   tag_release:
-    needs: [simple_deployment_pipeline]
+    needs: [deploy]
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
 
@@ -40,7 +40,7 @@ jobs:
           DEFAULT_BUMP: patch
 
   notify_success:
-    needs: [simple_deployment_pipeline]
+    needs: [deploy]
     runs-on: ubuntu-latest
     if: ${{ success() && github.event_name == 'push' }}
 
@@ -49,12 +49,7 @@ jobs:
         uses: Ilshidur/action-discord@master
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-          DISCORD_MESSAGE: |
-            Deployment Successful!
-            Repo: ${{ github.repository }}
-            Commit: ${{ github.sha }}
-            Message: ${{ github.event.head_commit.message }}
-            Author: ${{ github.actor }}
+          DISCORD_MESSAGE: " Deployment Successful!"
 
   notify_failure:
     runs-on: ubuntu-latest
@@ -65,9 +60,4 @@ jobs:
         uses: Ilshidur/action-discord@master
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-          DISCORD_MESSAGE: |
-            Build Failed!
-            Repo: ${{ github.repository }}
-            Commit: ${{ github.sha }}
-            Message: ${{ github.event.head_commit.message }}
-            Author: ${{ github.actor }}
+          DISCORD_MESSAGE: "Build Failed!"
