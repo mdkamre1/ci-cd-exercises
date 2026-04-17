@@ -1,4 +1,4 @@
-name: simple_deployment_pipeline
+name: ci_pipeline
 
 on:
   pull_request:
