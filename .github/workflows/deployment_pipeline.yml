@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  simple_deployment_pipeline:
+  build_and_test:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,7 +16,7 @@ jobs:
       - run: npm run build
 
   deploy:
-    needs: simple_deployment_pipeline
+    needs: build_and_test
     runs-on: ubuntu-latest
 
     steps:
@@ -28,15 +28,15 @@ jobs:
     if: success()
 
     steps:
-      - run: echo "Deployment Successful!"
+      - run: echo "Success"
 
   notify_failure:
-    needs: [simple_deployment_pipeline, deploy]
+    needs: [build_and_test, deploy]
     runs-on: ubuntu-latest
     if: failure()
 
     steps:
-      - run: echo "Build Failed!"
+      - run: echo "Failure"
 
   tag_release:
     needs: deploy
@@ -44,4 +44,4 @@ jobs:
     if: success()
 
     steps:
-      - run: echo "Tag skipped"
+      - run: echo "Tag"
