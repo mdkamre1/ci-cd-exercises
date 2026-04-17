@@ -11,25 +11,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run tests
-        run: npm test
-
-      - name: Build
-        run: npm run build
+      - run: npm install
+      - run: npm test
+      - run: npm run build
 
   deploy:
-    needs: build_and_test
+    needs: simple_deployment_pipeline
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Deploy
-        run: echo "Deploying app..."
+      - run: echo "Deploying app..."
 
   notify_success:
     needs: deploy
@@ -40,7 +31,7 @@ jobs:
       - run: echo "Deployment Successful!"
 
   notify_failure:
-    needs: [build_and_test, deploy]
+    needs: [simple_deployment_pipeline, deploy]
     runs-on: ubuntu-latest
     if: failure()
 
