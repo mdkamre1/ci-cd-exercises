@@ -1,0 +1,50 @@
+name: Deployment pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deployment_pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy
+        run: echo "Deploy step here"
+
+      # SUCCESS notification
+      - name: Discord Success Notification
+        if: success()
+        uses: Ilshidur/action-discord@v2
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          message: |
+            Deployment Successful!
+            Commit: ${{ github.sha }}
+            Message: ${{ github.event.head_commit.message }}
+
+      # FAILURE notification
+      - name: Discord Failure Notification
+        if: failure()
+        uses: Ilshidur/action-discord@v2
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          message: |
+            Build Failed!
+            Commit: ${{ github.sha }}
+            Author: ${{ github.actor }}
+
+            Details:
+            https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
