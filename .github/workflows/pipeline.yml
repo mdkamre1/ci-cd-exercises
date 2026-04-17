@@ -1,12 +1,11 @@
-name: Deployment pipeline
+name: simple_deployment_pipeline
 
 on:
-  push:
-    branches:
-      - main
+  pull_request:
+    branches: [main]
 
 jobs:
-  deploy:
+  simple_deployment_pipeline:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,33 +19,3 @@ jobs:
 
       - name: Build
         run: npm run build
-
-      - name: Deploy (dummy step)
-        run: echo "Deploying app..."
-
-      # SUCCESS notification
-      - name: Discord success
-        if: success()
-        uses: Ilshidur/action-discord@v2
-        with:
-          webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          message: |
-            Deployment Successful!
-            Commit: ${{ github.sha }}
-            Message: ${{ github.event.head_commit.message }}
-
-      # FAILURE notification
-      - name: Discord failure
-        if: failure()
-        uses: Ilshidur/action-discord@v2
-        with:
-          webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          message: |
-            Build Failed!
-            Repo: ${{ github.repository }}
-            Branch: ${{ github.ref }}
-            Commit: ${{ github.sha }}
-            Author: ${{ github.actor }}
-
-            Logs:
-            https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
