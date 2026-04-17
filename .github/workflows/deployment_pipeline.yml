@@ -37,8 +37,7 @@ jobs:
     if: success()
 
     steps:
-      - name: Discord success
-        run: echo "Deployment Successful!"
+      - run: echo "Deployment Successful!"
 
   notify_failure:
     needs: [build_and_test, deploy]
@@ -46,8 +45,7 @@ jobs:
     if: failure()
 
     steps:
-      - name: Discord failure
-        run: echo "Build Failed!"
+      - run: echo "Build Failed!"
 
   tag_release:
     needs: deploy
@@ -55,5 +53,4 @@ jobs:
     if: success()
 
     steps:
-      - name: Dummy tag step
-        run: echo "Tagging skipped"
+      - run: echo "Tag skipped"
