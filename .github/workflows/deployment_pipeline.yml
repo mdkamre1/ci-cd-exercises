@@ -1,11 +1,9 @@
-name: Deployment pipeline v2
+name: simple_deployment_pipeline
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches: [main]
 
 jobs:
   build_and_test:
@@ -40,13 +38,7 @@ jobs:
 
     steps:
       - name: Discord success
-        uses: Ilshidur/action-discord@master
-        with:
-          webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          message: |
-            Deployment Successful!
-            Repo: ${{ github.repository }}
-            Commit: ${{ github.sha }}
+        run: echo "Deployment Successful!"
 
   notify_failure:
     needs: [build_and_test, deploy]
@@ -55,17 +47,7 @@ jobs:
 
     steps:
       - name: Discord failure
-        uses: Ilshidur/action-discord@master
-        with:
-          webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          message: |
-            Build Failed!
-            Repo: ${{ github.repository }}
-            Commit: ${{ github.sha }}
-            Author: ${{ github.actor }}
-
-            Logs:
-            https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: echo "Build Failed!"
 
   tag_release:
     needs: deploy
@@ -73,10 +55,5 @@ jobs:
     if: success()
 
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Tag version
-        uses: anothrNick/github-tag-action@1.75.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DEFAULT_BUMP: patch
+      - name: Dummy tag step
+        run: echo "Tagging skipped"
