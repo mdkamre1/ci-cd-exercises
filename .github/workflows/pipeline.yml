@@ -1,4 +1,4 @@
-name: simple_deployment_pipeline 
+name: simple_deployment_pipeline
 
 on:
   push:
