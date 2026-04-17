@@ -1,4 +1,4 @@
-name: Health Check
+name: Health Check # Check the health of the deployed application
 
 on:
   workflow_dispatch:
