@@ -1,4 +1,4 @@
-name: Deploy to Render
+name: Deployment pipeline
 
 on:
   push:
@@ -13,10 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Install dependencies
         run: npm install
+
       - name: Run tests
         run: npm test
+
       - name: Build app
         run: npm run build
 
@@ -26,6 +29,7 @@ jobs:
     if: ${{ github.event_name == 'push' }}
     steps:
       - uses: actions/checkout@v3
+
       - name: Deploy to Render
         run: curl ${{ secrets.RENDER_DEPLOY_HOOK }}
 
@@ -35,6 +39,7 @@ jobs:
     if: ${{ github.event_name == 'push' }}
     steps:
       - uses: actions/checkout@v3
+
       - name: Tag version
         uses: anothrNick/github-tag-action@1.75.0
         env:
@@ -47,17 +52,30 @@ jobs:
     if: ${{ success() && github.event_name == 'push' }}
     steps:
       - name: Discord success
-        uses: Ilshidur/action-discord@master
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-          DISCORD_MESSAGE: "Deployment Successful!"
+        uses: Ilshidur/action-discord@v2
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          message: |
+            Deployment Successful!
+            Repo: ${{ github.repository }}
+            Commit: ${{ github.sha }}
+            Message: ${{ github.event.head_commit.message }}
 
   notify_failure:
+    needs: [build, deploy]
     runs-on: ubuntu-latest
     if: ${{ failure() }}
     steps:
       - name: Discord failure
-        uses: Ilshidur/action-discord@master
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-          DISCORD_MESSAGE: "Build Failed!"
+        uses: Ilshidur/action-discord@v2
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          message: |
+            Build Failed!
+            Repo: ${{ github.repository }}
+            Branch: ${{ github.ref }}
+            Commit: ${{ github.sha }}
+            Author: ${{ github.actor }}
+
+            Check logs:
+            https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
