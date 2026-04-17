@@ -1,0 +1,18 @@
+name: Health Check
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/15 * * * *'
+
+jobs:
+  health_check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check website health
+        uses: jtalk/url-health-check-action@v3
+        with:
+          url: https://ci-cd-exercises.onrender.com
+          max-attempts: 3
+          retry-delay: 5s
